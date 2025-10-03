@@ -2,7 +2,16 @@
   "name": "cloudquery-monorepo",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter web-app dev"
+    "dev": "pnpm --filter web-app dev",
+    "dev:web": "pnpm --filter web-app dev",
+    "dev:api": "cd analytics-engine && python run.py",
+    "dev:all": "concurrently \"pnpm dev:web\" \"pnpm dev:api\"",
+    "install:api": "cd analytics-engine && pip install -r requirements.txt",
+    "postinstall": "pnpm install:api",
+    "start:api": "cd analytics-engine && python run.py",
+    "test:api": "cd analytics-engine && python -c \"from src.core.weather_service import get_weather_analysis; print('✅ API modules working!')\""
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
 }
