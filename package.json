@@ -1,0 +1,8 @@
+{
+  "name": "cloudquery-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web-app dev"
+  },
+  "devDependencies": {}
+}

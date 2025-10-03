@@ -1,0 +1,8 @@
+packages:
+  - web-app
+  - docs
+  - analytics-engine
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild

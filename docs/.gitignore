@@ -1,0 +1,4 @@
+# Ignore build output if using a static site generator
+# For example, for Docusaurus:
+# .docusaurus/
+# build/
