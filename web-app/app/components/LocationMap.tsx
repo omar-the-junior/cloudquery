@@ -1,27 +1,13 @@
 import { Card } from '~/components/ui/card';
 import { MapPin, RefreshCw } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import GoogleMapReact from 'google-map-react';
+import { useEffect, useState } from 'react';
+import { ClientOnlyMap } from './ClientOnlyMap';
 
 interface LocationMapProps {
     onLocationChange: (lat: number, lng: number) => void;
     initialLat?: number;
     initialLng?: number;
 }
-
-// Custom marker component with improved design
-const LocationMarker = ({ lat, lng }: { lat: number; lng: number }) => (
-    <div className="relative">
-        {/* Outer pulse ring */}
-        <div className="absolute -inset-2 animate-ping rounded-full bg-primary/30"></div>
-        {/* Inner pulse ring */}
-        <div className="absolute -inset-1 animate-pulse rounded-full bg-primary/20"></div>
-        {/* Main marker */}
-        <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl ring-2 ring-white">
-            <MapPin className="h-5 w-5" />
-        </div>
-    </div>
-);
 
 export const LocationMap = ({
     onLocationChange,
@@ -33,10 +19,10 @@ export const LocationMap = ({
         lng: initialLng,
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [mapCenter, setMapCenter] = useState({
-        lat: initialLat || 40.7128,
-        lng: initialLng || -74.0060,
-    });
+    const [mapCenter, setMapCenter] = useState<[number, number]>([
+        initialLat || 40.7128,
+        initialLng || -74.0060,
+    ]);
     const [zoom, setZoom] = useState(11);
 
     // Get user's current location
@@ -51,7 +37,7 @@ export const LocationMap = ({
             (position) => {
                 const { latitude, longitude } = position.coords;
                 setCoordinates({ lat: latitude, lng: longitude });
-                setMapCenter({ lat: latitude, lng: longitude });
+                setMapCenter([latitude, longitude]);
                 onLocationChange(latitude, longitude);
                 setIsLoading(false);
             },
@@ -65,8 +51,8 @@ export const LocationMap = ({
         );
     };
 
-    // Handle map click using Google Maps API
-    const handleMapClick = ({ lat, lng }: { lat: number; lng: number }) => {
+    // Handle map click
+    const handleMapClick = (lat: number, lng: number) => {
         setCoordinates({ lat, lng });
         onLocationChange(lat, lng);
     };
@@ -75,7 +61,7 @@ export const LocationMap = ({
     useEffect(() => {
         if (initialLat !== 0 || initialLng !== 0) {
             setCoordinates({ lat: initialLat, lng: initialLng });
-            setMapCenter({ lat: initialLat, lng: initialLng });
+            setMapCenter([initialLat, initialLng]);
         }
     }, [initialLat, initialLng]);
 
@@ -110,37 +96,12 @@ export const LocationMap = ({
 
                 {/* Map Container */}
                 <div className="relative h-80 w-full overflow-hidden rounded-xl border border-border shadow-lg">
-                    <GoogleMapReact
-                        bootstrapURLKeys={{
-                            key: '' // Remove client-side API key for security
-                        }}
-                        defaultCenter={mapCenter}
+                    <ClientOnlyMap
                         center={mapCenter}
-                        defaultZoom={zoom}
-                        onClick={handleMapClick}
-                        yesIWantToUseGoogleMapApiInternals={true}
-                        options={{
-                            disableDefaultUI: false,
-                            zoomControl: true,
-                            mapTypeControl: true,
-                            scaleControl: true,
-                            streetViewControl: true,
-                            rotateControl: true,
-                            fullscreenControl: true,
-                            styles: [
-                                {
-                                    featureType: "poi",
-                                    elementType: "labels",
-                                    stylers: [{ visibility: "off" }]
-                                }
-                            ]
-                        }}
-                    >
-                        {/* Location marker */}
-                        {coordinates.lat !== 0 && coordinates.lng !== 0 && (
-                            <LocationMarker lat={coordinates.lat} lng={coordinates.lng} />
-                        )}
-                    </GoogleMapReact>
+                        zoom={zoom}
+                        coordinates={coordinates}
+                        onLocationChange={handleMapClick}
+                    />
 
                     {/* Instructions */}
                     <div className="absolute left-4 top-4 rounded-lg bg-background/95 px-3 py-2 text-sm text-muted-foreground backdrop-blur-md border border-border/50 shadow-lg">
@@ -181,15 +142,15 @@ export const LocationMap = ({
                 </div>
 
                 {/* Status Note */}
-                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-3">
+                <div className="rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 p-3">
                     <div className="flex items-start gap-2">
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/50 mt-0.5">
-                            <div className="h-2 w-2 rounded-full bg-amber-600"></div>
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50 mt-0.5">
+                            <div className="h-2 w-2 rounded-full bg-green-600"></div>
                         </div>
                         <div className="text-sm">
-                            <p className="font-medium text-amber-900 dark:text-amber-100">Development Mode</p>
-                            <p className="text-amber-700 dark:text-amber-300 text-xs mt-1">
-                                Map is in development mode. For production, implement server-side API key handling for security.
+                            <p className="font-medium text-green-900 dark:text-green-100">OpenStreetMap Integration</p>
+                            <p className="text-green-700 dark:text-green-300 text-xs mt-1">
+                                Powered by React Leaflet and OpenStreetMap. No API keys required - completely free and open source!
                             </p>
                         </div>
                     </div>
