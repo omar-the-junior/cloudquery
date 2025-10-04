@@ -34,12 +34,6 @@ interface WeatherAnalysisResult {
             average: number;
         };
     };
-    historical_analysis: {
-        total_years_analyzed: number;
-        favorable_years: number;
-        unfavorable_years: number;
-        trend: string;
-    };
     recommendations: string[];
     risk_factors: string[];
 }
@@ -116,8 +110,7 @@ export const WeatherResults = ({
                         Weather Analysis Results
                     </h2>
                     <p className="text-muted-foreground">
-                        Based on {data.historical_analysis.total_years_analyzed}{' '}
-                        years of NASA historical data
+                        Based on NASA historical data
                     </p>
                 </div>
 
@@ -271,51 +264,10 @@ export const WeatherResults = ({
                                     %
                                 </span>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">
-                                    Trend:
-                                </span>
-                                <span className="capitalize">
-                                    {data.historical_analysis.trend}
-                                </span>
-                            </div>
                         </div>
                     </Card>
                 </div>
 
-                {/* Historical Analysis */}
-                <Card className="border-accent/30 bg-gradient-to-br from-card to-accent/5 p-6 backdrop-blur-sm">
-                    <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold">
-                        <Cloud className="h-5 w-5 text-accent" />
-                        Historical Analysis
-                    </h3>
-                    <div className="grid gap-4 md:grid-cols-3">
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-primary">
-                                {data.historical_analysis.favorable_years}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                Favorable Years
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-destructive">
-                                {data.historical_analysis.unfavorable_years}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                Unfavorable Years
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold text-accent">
-                                {data.historical_analysis.total_years_analyzed}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                                Total Years
-                            </div>
-                        </div>
-                    </div>
-                </Card>
 
                 {/* Recommendations and Risk Factors */}
                 <div className="grid gap-6 md:grid-cols-2">

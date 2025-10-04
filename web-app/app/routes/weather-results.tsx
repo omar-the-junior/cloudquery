@@ -27,12 +27,6 @@ interface WeatherAnalysisResult {
             average: number;
         };
     };
-    historical_analysis: {
-        total_years_analyzed: number;
-        favorable_years: number;
-        unfavorable_years: number;
-        trend: string;
-    };
     recommendations: string[];
     risk_factors: string[];
 }
@@ -95,12 +89,6 @@ export default function WeatherResultsPage() {
                                 average: 58,
                             },
                         },
-                        historical_analysis: {
-                            total_years_analyzed: 18,
-                            favorable_years: 15,
-                            unfavorable_years: 3,
-                            trend: "excellent",
-                        },
                         recommendations: [
                             "Excellent weather conditions for your outdoor event",
                             "Perfect temperature range for guest comfort",
@@ -138,12 +126,6 @@ export default function WeatherResultsPage() {
                             humidity: {
                                 average: 72,
                             },
-                        },
-                        historical_analysis: {
-                            total_years_analyzed: 16,
-                            favorable_years: 10,
-                            unfavorable_years: 6,
-                            trend: "stable",
                         },
                         recommendations: [
                             "Good conditions for outdoor activities",
@@ -183,12 +165,6 @@ export default function WeatherResultsPage() {
                             humidity: {
                                 average: 65,
                             },
-                        },
-                        historical_analysis: {
-                            total_years_analyzed: 15,
-                            favorable_years: 11,
-                            unfavorable_years: 4,
-                            trend: "improving",
                         },
                         recommendations: [
                             "Good weather conditions for your activity",
