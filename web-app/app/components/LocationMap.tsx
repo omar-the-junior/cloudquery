@@ -141,20 +141,6 @@ export const LocationMap = ({
                     </div>
                 </div>
 
-                {/* Status Note */}
-                <div className="rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 p-3">
-                    <div className="flex items-start gap-2">
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50 mt-0.5">
-                            <div className="h-2 w-2 rounded-full bg-green-600"></div>
-                        </div>
-                        <div className="text-sm">
-                            <p className="font-medium text-green-900 dark:text-green-100">OpenStreetMap Integration</p>
-                            <p className="text-green-700 dark:text-green-300 text-xs mt-1">
-                                Powered by React Leaflet and OpenStreetMap. No API keys required - completely free and open source!
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </Card>
     );

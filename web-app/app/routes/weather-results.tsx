@@ -89,8 +89,21 @@ export default function WeatherResultsPage() {
                     throw new Error(result.error || 'API returned unsuccessful response');
                 }
 
+                // Validate the data structure
+                const data = result.data;
+                if (!data || !data.weather_conditions) {
+                    throw new Error('Invalid data structure: weather_conditions is missing');
+                }
+
+                // Validate required weather condition properties
+                const { weather_conditions } = data;
+                if (!weather_conditions.temperature || !weather_conditions.precipitation ||
+                    !weather_conditions.wind || !weather_conditions.humidity) {
+                    throw new Error('Invalid data structure: missing required weather condition properties');
+                }
+
                 // Set the enhanced weather data
-                setWeatherData(result.data);
+                setWeatherData(data);
             } catch (err) {
                 console.error('Weather analysis error:', err);
                 setError(err instanceof Error ? err.message : 'An error occurred while analyzing weather data');

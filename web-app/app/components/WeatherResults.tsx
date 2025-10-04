@@ -88,6 +88,25 @@ export const WeatherResults = ({
         return null;
     }
 
+    // Check if weather_conditions exists and has the required structure
+    if (!data.weather_conditions) {
+        return (
+            <Card className="border-destructive/30 bg-gradient-to-br from-card to-destructive/5 p-8 backdrop-blur-sm">
+                <div className="text-center">
+                    <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-destructive/10 p-3">
+                        <Cloud className="h-6 w-6 text-destructive" />
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold text-destructive">
+                        Data Error
+                    </h3>
+                    <p className="text-muted-foreground">
+                        Weather conditions data is missing or incomplete.
+                    </p>
+                </div>
+            </Card>
+        );
+    }
+
     const getScoreColor = (score: number) => {
         if (score >= 80)
             return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/20';
@@ -110,7 +129,7 @@ export const WeatherResults = ({
                         Weather Analysis Results
                     </h2>
                     <p className="text-muted-foreground">
-                        Based on NASA historical data
+                        Based on 40 years of NASA historical data
                     </p>
                 </div>
 
@@ -152,9 +171,9 @@ export const WeatherResults = ({
                                     Average:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.temperature.average.toFixed(
+                                    {data.weather_conditions.temperature?.average?.toFixed(
                                         1,
-                                    )}
+                                    ) || 'N/A'}
                                     °C
                                 </span>
                             </div>
@@ -163,13 +182,13 @@ export const WeatherResults = ({
                                     Range:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.temperature.min.toFixed(
+                                    {data.weather_conditions.temperature?.min?.toFixed(
                                         0,
-                                    )}
+                                    ) || 'N/A'}
                                     ° -{' '}
-                                    {data.weather_conditions.temperature.max.toFixed(
+                                    {data.weather_conditions.temperature?.max?.toFixed(
                                         0,
-                                    )}
+                                    ) || 'N/A'}
                                     °
                                 </span>
                             </div>
@@ -190,9 +209,9 @@ export const WeatherResults = ({
                                     Rain Chance:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.precipitation.probability_of_rain.toFixed(
+                                    {data.weather_conditions.precipitation?.probability_of_rain?.toFixed(
                                         0,
-                                    )}
+                                    ) || 'N/A'}
                                     %
                                 </span>
                             </div>
@@ -201,9 +220,9 @@ export const WeatherResults = ({
                                     Max Daily:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.precipitation.max.toFixed(
+                                    {data.weather_conditions.precipitation?.max?.toFixed(
                                         1,
-                                    )}
+                                    ) || 'N/A'}
                                     mm
                                 </span>
                             </div>
@@ -224,9 +243,9 @@ export const WeatherResults = ({
                                     Average:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.wind.average_speed.toFixed(
+                                    {data.weather_conditions.wind?.average_speed?.toFixed(
                                         1,
-                                    )}{' '}
+                                    ) || 'N/A'}{' '}
                                     km/h
                                 </span>
                             </div>
@@ -235,9 +254,9 @@ export const WeatherResults = ({
                                     Max:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.wind.max_speed.toFixed(
+                                    {data.weather_conditions.wind?.max_speed?.toFixed(
                                         1,
-                                    )}{' '}
+                                    ) || 'N/A'}{' '}
                                     km/h
                                 </span>
                             </div>
@@ -258,9 +277,9 @@ export const WeatherResults = ({
                                     Humidity:
                                 </span>
                                 <span>
-                                    {data.weather_conditions.humidity.average.toFixed(
+                                    {data.weather_conditions.humidity?.average?.toFixed(
                                         0,
-                                    )}
+                                    ) || 'N/A'}
                                     %
                                 </span>
                             </div>

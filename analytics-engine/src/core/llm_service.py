@@ -224,7 +224,7 @@ Here is the analysis_json to process:
         """Initialize the Gemini AI model if not already initialized."""
         if not self._initialized:
             if not self.api_key:
-                raise ValueError("GEMINI_API_KEY environment variable is required")
+                raise ValueError("GEMINI_API_KEY environment variable is required. Please set your Gemini API key to enable enhanced weather analysis.")
             
             genai.configure(api_key=self.api_key)
             self.model = genai.GenerativeModel(self.model_name)
