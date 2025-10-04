@@ -18,8 +18,8 @@ interface WeatherAnalysisResult {
             average: number;
             min: number;
             max: number;
-            percentile_90: number;
-            percentile_10: number;
+            percentile_90?: number;
+            percentile_10?: number;
         };
         precipitation: {
             average: number;

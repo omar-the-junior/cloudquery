@@ -6,6 +6,10 @@ This module contains all configuration settings for the application.
 
 import os
 from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class Settings:
@@ -39,6 +43,10 @@ class Settings:
     # Data Processing Configuration
     MISSING_VALUE_INDICATOR: int = -999
     DECIMAL_PLACES: int = 2
+    
+    # Gemini AI Configuration
+    GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY")
+    GEMINI_MODEL_NAME: str = "gemini-2.5-flash"
 
 
 # Global settings instance

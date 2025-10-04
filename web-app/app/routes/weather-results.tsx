@@ -11,8 +11,8 @@ interface WeatherAnalysisResult {
             average: number;
             min: number;
             max: number;
-            percentile_90: number;
-            percentile_10: number;
+            percentile_90?: number;
+            percentile_10?: number;
         };
         precipitation: {
             average: number;
@@ -56,133 +56,44 @@ export default function WeatherResultsPage() {
                     description: searchParams.get('description') || '',
                 };
 
-                // Simulate API delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                // Mock response data - Generate different scenarios based on activity
-                const activity = formData.activity.toLowerCase();
-                let mockResult: WeatherAnalysisResult;
-
-                if (activity.includes('wedding') || activity.includes('outdoor')) {
-                    // Excellent weather for outdoor events
-                    mockResult = {
-                        suitability_score: 85,
-                        confidence_rating: "Very High",
-                        weather_conditions: {
-                            temperature: {
-                                average: 24.2,
-                                min: 18.5,
-                                max: 29.8,
-                                percentile_90: 27.2,
-                                percentile_10: 20.1,
-                            },
-                            precipitation: {
-                                average: 1.2,
-                                max: 8.5,
-                                probability_of_rain: 15,
-                            },
-                            wind: {
-                                average_speed: 6.8,
-                                max_speed: 12.3,
-                            },
-                            humidity: {
-                                average: 58,
-                            },
-                        },
-                        recommendations: [
-                            "Excellent weather conditions for your outdoor event",
-                            "Perfect temperature range for guest comfort",
-                            "Very low chance of rain - ideal for outdoor activities",
-                            "Gentle breeze will keep guests comfortable",
-                            "Consider outdoor ceremony and reception"
-                        ],
-                        risk_factors: [
-                            "Minimal risk factors identified",
-                            "Slight chance of afternoon showers"
-                        ],
-                    };
-                } else if (activity.includes('hiking') || activity.includes('camping')) {
-                    // Good weather for outdoor activities
-                    mockResult = {
-                        suitability_score: 72,
-                        confidence_rating: "High",
-                        weather_conditions: {
-                            temperature: {
-                                average: 19.8,
-                                min: 12.3,
-                                max: 26.5,
-                                percentile_90: 24.1,
-                                percentile_10: 15.2,
-                            },
-                            precipitation: {
-                                average: 3.8,
-                                max: 22.1,
-                                probability_of_rain: 35,
-                            },
-                            wind: {
-                                average_speed: 12.5,
-                                max_speed: 25.8,
-                            },
-                            humidity: {
-                                average: 72,
-                            },
-                        },
-                        recommendations: [
-                            "Good conditions for outdoor activities",
-                            "Pack rain gear for potential afternoon showers",
-                            "Start early to avoid afternoon wind",
-                            "Bring layers for temperature changes",
-                            "Check trail conditions before departure"
-                        ],
-                        risk_factors: [
-                            "Moderate chance of precipitation",
-                            "Stronger winds in afternoon",
-                            "Temperature drops significantly at night"
-                        ],
-                    };
-                } else {
-                    // Default scenario - moderate weather
-                    mockResult = {
-                        suitability_score: 78,
-                        confidence_rating: "High",
-                        weather_conditions: {
-                            temperature: {
-                                average: 22.5,
-                                min: 15.2,
-                                max: 28.8,
-                                percentile_90: 26.4,
-                                percentile_10: 18.1,
-                            },
-                            precipitation: {
-                                average: 2.3,
-                                max: 15.7,
-                                probability_of_rain: 25,
-                            },
-                            wind: {
-                                average_speed: 8.2,
-                                max_speed: 18.5,
-                            },
-                            humidity: {
-                                average: 65,
-                            },
-                        },
-                        recommendations: [
-                            "Good weather conditions for your activity",
-                            "Consider bringing light layers for temperature variations",
-                            "Low chance of precipitation - minimal rain gear needed",
-                            "Moderate wind conditions suitable for most activities",
-                            "Plan for slight humidity variations"
-                        ],
-                        risk_factors: [
-                            "Slight temperature variation between day and night",
-                            "Moderate humidity levels may affect comfort"
-                        ],
-                    };
+                // Validate required fields
+                if (!formData.latitude || !formData.longitude || !formData.date || !formData.activity) {
+                    setError('Missing required form data');
+                    setIsLoading(false);
+                    return;
                 }
 
-                setWeatherData(mockResult);
+                // Call the enhanced weather analysis API
+                const response = await fetch('http://localhost:8001/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        latitude: formData.latitude,
+                        longitude: formData.longitude,
+                        target_date: formData.date,
+                        user_activity: formData.activity,
+                        user_activity_desc: formData.description || formData.activity,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'API returned unsuccessful response');
+                }
+
+                // Set the enhanced weather data
+                setWeatherData(result.data);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred');
+                console.error('Weather analysis error:', err);
+                setError(err instanceof Error ? err.message : 'An error occurred while analyzing weather data');
             } finally {
                 setIsLoading(false);
             }

@@ -6,6 +6,7 @@ from the NASA POWER API.
 """
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 import uvicorn
 import sys
@@ -15,6 +16,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from ..core.weather_service import get_weather_analysis
+from ..core.llm_service import llm_service
 from ..models.weather_models import WeatherAnalysisRequest, WeatherAnalysisResponse
 from config.settings import settings
 
@@ -24,6 +26,15 @@ app = FastAPI(
     title=settings.API_TITLE,
     description=settings.API_DESCRIPTION,
     version=settings.API_VERSION
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 
@@ -49,7 +60,8 @@ async def analyze_weather(request: WeatherAnalysisRequest):
     Analyze historical weather data for a specific location and date.
     
     This endpoint fetches 40+ years of historical weather data from NASA POWER API
-    and analyzes it for a 31-day window around the target date.
+    and analyzes it for a 31-day window around the target date. The results are then
+    enhanced using Gemini AI to provide contextual insights based on the user's activity.
     """
     try:
         # Validate date format
@@ -76,10 +88,31 @@ async def analyze_weather(request: WeatherAnalysisRequest):
                 error=result["error"]
             )
         
-        return WeatherAnalysisResponse(
-            success=True,
-            data=result
-        )
+        # Prepare data for LLM enhancement
+        analysis_data = {
+            "user_activity": request.user_activity,
+            "user_activity_desc": request.user_activity_desc,
+            "analysis_result": result
+        }
+        
+        # Enhance the analysis using Gemini AI
+        try:
+            enhanced_result = llm_service.enhance_weather_analysis(analysis_data)
+            return WeatherAnalysisResponse(
+                success=True,
+                data=enhanced_result
+            )
+        except Exception as llm_error:
+            # If LLM enhancement fails, return the original analysis with a warning
+            return WeatherAnalysisResponse(
+                success=True,
+                data={
+                    "raw_analysis": result,
+                    "enhancement_error": f"LLM enhancement failed: {str(llm_error)}",
+                    "user_activity": request.user_activity,
+                    "user_activity_desc": request.user_activity_desc
+                }
+            )
         
     except Exception as e:
         raise HTTPException(
