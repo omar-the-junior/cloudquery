@@ -6,16 +6,15 @@ This is the monorepo for the CloudQuery project.
 
 ## Packages
 
-- `web-app`: Laravel web application.
+- `web-app`: React Router v7 web application with TypeScript and Tailwind CSS.
 - `docs`: Documentation.
 - `analytics-engine`: Python analytics engine with FastAPI.
 
 ## Prerequisites
 
-- Docker
+- Node.js (v18 or higher)
 - pnpm
-- PHP, Composer
-- Python
+- Python (v3.8 or higher)
 
 ## Getting Started
 
@@ -23,15 +22,10 @@ This is the monorepo for the CloudQuery project.
     ```bash
     pnpm install
     ```
-2.  Copy the environment file for the web-app:
+2.  Start the development environment:
     ```bash
-    cp web-app/.env.example web-app/.env
-    ```
-3.  Start the development environment:
-    ```bash
-    pnpm dev
+    pnpm dev:all
     ```
     This will start:
-    - MySQL database in Docker.
-    - Laravel web server.
-    - FastAPI analytics engine.
+    - React Router development server (web-app)
+    - FastAPI analytics engine
